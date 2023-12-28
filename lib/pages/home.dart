@@ -1,8 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:todo_app/constants/app_colors.dart';
-import 'package:todo_app/widgets/search_box.dart';
+import '../constants/app_colors.dart';
+import '../widgets/search_box.dart';
+import '../widgets/todo_item.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -20,6 +21,26 @@ class Home extends StatelessWidget {
         child: Column(
           children: [
             SearchBox(),
+            Expanded(
+              child: ListView(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(
+                      top: 50,
+                      bottom: 20,
+                    ),
+                    child: Text(
+                      'Reminders',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 30,
+                      ),
+                    ),
+                  ),
+                  ToDoItem(),
+                ],
+              ),
+            )
           ],
         ),
       ),
