@@ -1,5 +1,8 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:todo_app/constants/app_colors.dart';
+import 'package:todo_app/widgets/search_box.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -10,7 +13,15 @@ class Home extends StatelessWidget {
       backgroundColor: AppColors.bgcolor,
       appBar: _buildAppBar(),
       body: Container(
-        child: Text('This is the home page'),
+        padding: EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 15,
+        ),
+        child: Column(
+          children: [
+            SearchBox(),
+          ],
+        ),
       ),
     );
   }
