@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/model/todo.dart';
 import '../constants/app_colors.dart';
-import '../widgets/search_box.dart';
 import '../widgets/todo_item.dart';
 
 class Home extends StatefulWidget {
@@ -15,6 +14,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final todosList = ToDo.todoList();
+  List<ToDo> _foundToDo = [];
+  final _todoController = TextEditingController();
+
+  @override
+  void initState() {
+    _foundToDo = todosList;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +37,7 @@ class _HomeState extends State<Home> {
             ),
             child: Column(
               children: [
-                SearchBox(),
+                searchBox(),
                 Expanded(
                   child: ListView(
                     children: [
@@ -47,9 +54,11 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-                      for (ToDo todo in todosList)
+                      for (ToDo todo in _foundToDo.reversed)
                         ToDoItem(
                           todo: todo,
+                          onToDoChanged: _handleToDoChange,
+                          onDeleteItem: _deleteToDoItem,
                         ),
                     ],
                   ),
@@ -85,6 +94,7 @@ class _HomeState extends State<Home> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextField(
+                      controller: _todoController,
                       decoration: InputDecoration(
                         hintText: 'Add a New Reminder',
                         border: InputBorder.none,
@@ -98,7 +108,9 @@ class _HomeState extends State<Home> {
                     right: 20,
                   ),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _addToDoItem(_todoController.text);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.blue,
                       foregroundColor: Colors.white,
@@ -122,6 +134,77 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
+
+  Widget searchBox() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: TextField(
+        onChanged: (value) => _runFilter(value),
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.all(0),
+          prefixIcon: Icon(
+            Icons.search,
+            color: AppColors.black,
+            size: 20,
+          ),
+          prefixIconConstraints: BoxConstraints(
+            maxHeight: 20,
+            minWidth: 25,
+          ),
+          border: InputBorder.none,
+          hintText: 'Search',
+          hintStyle: TextStyle(
+            color: AppColors.grey,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleToDoChange(ToDo todo) {
+    setState(() {
+      todo.isDone = !todo.isDone;
+    });
+  }
+
+  void _deleteToDoItem(String id) {
+    setState(() {
+      todosList.removeWhere((item) => item.id == id);
+    });
+  }
+
+  void _addToDoItem(String todo) {
+    setState(
+      () {
+        todosList.add(
+          ToDo(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            todoText: todo,
+          ),
+        );
+      },
+    );
+    _todoController.clear();
+  }
+
+  void _runFilter(String enteredKeyword) {
+    List<ToDo> results = [];
+    if (enteredKeyword.isEmpty) {
+      results = todosList;
+    } else {
+      results = todosList
+          .where(
+              (item) => item.todoText!.toLowerCase().contains(enteredKeyword))
+          .toList();
+    }
+    setState(() {
+      _foundToDo = results;
+    });
   }
 
   AppBar _buildAppBar() {

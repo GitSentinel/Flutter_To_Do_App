@@ -10,15 +10,6 @@ class ToDo {
   });
 
   static List<ToDo> todoList() {
-    return [
-      ToDo(
-        id: '01',
-        todoText: 'Check Email',
-      ),
-      ToDo(
-        id: '02',
-        todoText: 'Check WhatsApp',
-      ),
-    ];
+    return [];
   }
 }
